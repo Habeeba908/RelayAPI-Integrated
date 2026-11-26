@@ -1,39 +1,178 @@
-# RelayAPI — Full-Stack Integrated Project
+# RelayAPI
+### Full-Stack API Development and Testing Platform
 
-This project keeps the original **RelayAPI React + TypeScript frontend** and includes the **API Nova Express + PostgreSQL backend** plus RelayAPI-compatible API endpoints.
+RelayAPI is a full-stack API development and testing platform that combines a React-based frontend with an Express.js backend and PostgreSQL database.
 
-## Project contents
+The project integrates the original RelayAPI frontend with API Nova backend functionality while maintaining compatibility with existing RelayAPI API endpoints.
 
-- `src/` — original RelayAPI frontend (React, TypeScript, Vite)
-- `backend/` — Express API, API Nova authentication/share/collection routes, RelayAPI compatibility routes, request execution proxy and PostgreSQL schema
-- `docker-compose.yml` — PostgreSQL 16 service
-- `.env.example` and `backend/.env.example` — configuration templates
+It provides an environment for creating, configuring, executing, managing and sharing API requests through a unified interface.
 
-## Requirements
+---
 
-- Node.js 20 or newer (Node 22 LTS recommended)
-- npm
-- Docker Desktop (recommended; used to run PostgreSQL)
+## 1. Technology Stack
 
-## Run on Windows (PowerShell)
+| Layer | Technologies |
+|---|---|
+| Frontend | React, TypeScript, Vite |
+| Backend | Node.js, Express.js |
+| Database | PostgreSQL 16 |
+| Styling | CSS |
+| Security | Helmet, CORS, URL validation |
+| Containerization | Docker, Docker Compose |
+| Package Management | npm |
 
-### 1. Extract the ZIP
+## 2. System Architecture
 
-Extract the entire ZIP to a normal folder, for example `C:\Projects\RelayAPI-Integrated`.
+The application follows a frontend–backend–database architecture.
 
-### 2. Start PostgreSQL
+```text
+          USER
+            |
+            v
+    REACT + TYPESCRIPT
+        FRONTEND
+            |
+            | HTTP / REST API
+            v
+      EXPRESS.JS SERVER
+            |
+     +------+-------+
+     |      |       |
+     v      v       v
+  AUTH   REQUEST  SHARE &
+ ROUTES  EXECUTION COLLECTIONS
+     |      |       |
+     +------+-------+
+            |
+            v
+       POSTGRESQL
+        DATABASE
+```
 
-Open a terminal in the project root:
+### Main Components
 
-```powershell
+**Frontend**
+- React-based user interface.
+- TypeScript application structure.
+- API request configuration and execution interface.
+- Collection and request management.
+- Sharing functionality.
+
+**Backend**
+- Express.js REST API.
+- Authentication routes.
+- API request execution proxy.
+- Collection management.
+- Share-link generation and retrieval.
+- RelayAPI-compatible endpoints.
+
+**Database**
+- PostgreSQL relational database.
+- Persistent storage for collections, history and environments.
+- Database schema and initialization scripts.
+
+## 3. Project Structure
+
+```text
+RelayAPI-Integrated/
+│
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── services/
+│   └── ...
+│
+├── backend/
+│   ├── src/
+│   │   ├── db/
+│   │   │   ├── init.js
+│   │   │   ├── pool.js
+│   │   │   └── schema.sql
+│   │   │
+│   │   ├── lib/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   └── server.js
+│   │
+│   ├── package.json
+│   └── .env.example
+│
+├── docker-compose.yml
+├── .env.example
+├── package.json
+└── README.md
+```
+
+## 4. Key Features
+
+### API Request Management
+- Configure and execute HTTP requests.
+- Support for GET, POST, PUT, PATCH, DELETE and HEAD methods.
+- Configure request headers, parameters and request bodies.
+- View API responses.
+
+### Backend API Services
+- Express.js server architecture.
+- REST API endpoints.
+- Authentication routes.
+- Request execution and validation services.
+- RelayAPI-compatible API routes.
+
+### Collection Management
+- Organise API requests into collections.
+- Store collection information.
+- Manage saved API requests.
+
+### Shareable API Requests
+- Generate unique share tokens.
+- Store request snapshots in PostgreSQL.
+- Retrieve shared snapshots through API endpoints.
+- Generate API URLs and cURL commands.
+- Share links with a 30-day expiration period.
+
+### Database Integration
+- PostgreSQL 16 integration.
+- Persistent storage.
+- Database initialization scripts.
+- Docker-based database setup.
+
+### Security
+- HTTP security headers using Helmet.
+- Configurable CORS.
+- URL validation for request execution.
+- Private and local network destination restrictions by default.
+
+## 5. Installation and Setup
+
+### Prerequisites
+
+Install the following:
+
+- Node.js 20 or newer (Node.js 22 LTS recommended).
+- npm.
+- Docker Desktop.
+- Git.
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/Habeeba908/RelayAPI-Integrated.git
+cd RelayAPI-Integrated
+```
+
+### Step 2: Start the Database
+
+From the project root:
+
+```bash
 docker compose up -d db
 ```
 
-Wait until the database container is healthy.
+Wait until the PostgreSQL container reports a healthy status.
 
-### 3. Configure and start the backend
+### Step 3: Configure the Backend
 
-Open **Terminal 1** in VS Code:
+Open a separate terminal:
 
 ```powershell
 cd backend
@@ -43,66 +182,126 @@ npm run db:init
 npm run dev
 ```
 
-Backend health URL: `http://localhost:5000/api/health`
+Backend server:
 
-The default backend database settings are for the included local Docker database. Change `backend/.env` if you use a different PostgreSQL instance.
+`http://localhost:5000`
 
-### 4. Install and start the original RelayAPI frontend
+Health check:
 
-Open **Terminal 2** in the project root (not inside `backend`):
+`http://localhost:5000/api/health`
 
-```powershell
+### Step 4: Start the Frontend
+
+Open another terminal in the project root:
+
+```bash
 npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite, normally `http://localhost:3000`.
+Open the URL provided by Vite in your browser.
 
-## Useful commands
+The frontend normally runs at:
 
-From the project root:
+`http://localhost:3000`
 
-```powershell
-npm run build       # production frontend build
-npm run lint        # TypeScript check
+## 6. API Endpoints
+
+The backend exposes the following API groups:
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/api/health` | Backend and database health |
+| POST | `/api/requests/execute` | Execute API requests |
+| POST | `/api/requests/validate` | Validate requests |
+| POST | `/api/security/check` | Security checks |
+| POST | `/api/errors/explain` | Explain request errors |
+| GET / POST | `/api/collections` | Manage collections |
+| PUT / DELETE | `/api/collections/:id` | Update or delete collections |
+| POST | `/api/collections/:id/run` | Collection compatibility endpoint |
+| GET / POST / DELETE | `/api/history` | Manage request history |
+| GET / PUT / DELETE | `/api/environments` | Manage environments |
+| POST | `/api/auth/signup` | User registration |
+| POST | `/api/auth/login` | User authentication |
+| GET / POST / DELETE | `/api/share` | Share-link operations |
+
+Additional API Nova collection endpoints are available under:
+
+`/api/nova/collections/`
+
+Share-link retrieval is available under:
+
+`/api/share/:token`
+
+## 7. Database Configuration
+
+RelayAPI uses PostgreSQL 16 for backend data persistence.
+
+The database configuration is managed through environment variables.
+
+Configuration templates:
+
+- `.env.example`
+- `backend/.env.example`
+
+Database initialization:
+
+```bash
+npm run db:init
 ```
 
-From the `backend` folder:
+The PostgreSQL service is managed through Docker Compose.
 
-```powershell
-npm run dev         # development backend
-npm start           # production backend
-npm run db:init     # create/update database tables
+Never commit actual `.env` files or database credentials to GitHub.
+
+## 8. Development Commands
+
+**Frontend — project root**
+
+```bash
+npm install
+npm run dev
+npm run build
+npm run lint
 ```
 
-## Backend endpoints
+**Backend — backend directory**
 
-- `GET /api/health`
-- `POST /api/requests/execute`
-- `POST /api/requests/validate`
-- `POST /api/security/check`
-- `POST /api/errors/explain`
-- `GET|POST /api/collections`
-- `PUT|DELETE /api/collections/:id`
-- `POST /api/collections/:id/run`
-- `GET|POST|DELETE /api/history`
-- `GET|PUT|DELETE /api/environments`
-- `POST /api/auth/signup`, `POST /api/auth/login`
-- `/api/nova/collections/*` — API Nova collection routes
-- `/api/share/*` — share-link routes
+```bash
+npm install
+npm run dev
+npm start
+npm run db:init
+```
 
-## Important implementation notes
+## 9. Implementation Notes and Limitations
 
-- The existing RelayAPI frontend source in `src/` is retained; API Nova's separate frontend is not substituted for it.
-- PostgreSQL is used by the backend for persisted collections, history and environments. The frontend retains its existing local-storage fallback.
-- The backend request proxy blocks private/local network destinations by default as an SSRF safety measure. This can prevent requests to `localhost`, LAN devices and private IPs; do not disable this protection on an internet-exposed server.
-- API Nova authentication and share endpoints are included in the backend. The current RelayAPI UI does not yet include login/signup screens.
-- The collection runner UI executes its requests sequentially using the existing RelayAPI request service. The backend `/api/collections/:id/run` compatibility endpoint currently reports saved requests as skipped; it is not the execution path used by the UI.
-- Dependencies are not bundled in this ZIP. Run `npm install` in the project root and in `backend` as shown above.
+- The original RelayAPI React frontend is retained.
+- API Nova backend functionality is integrated without replacing the original frontend.
+- PostgreSQL provides backend persistence, while the frontend retains its existing local-storage fallback.
+- The current frontend does not yet include login and signup screens.
+- The collection runner interface uses the existing RelayAPI request service. The backend collection-run compatibility endpoint currently reports saved requests as skipped.
+- Private and local network destinations are restricted by default by the backend request proxy.
+- Shared snapshots are retrieved through backend API endpoints; a complete frontend shared-view route should not be assumed.
 
-## Troubleshooting
+## 10. Future Improvements
 
-- If `localhost:5000/api/health` fails, check that the backend terminal is running and Docker reports the database as healthy.
-- If the database connection fails, check `backend/.env` against the credentials in `docker-compose.yml`.
-- If the frontend cannot reach the backend, confirm the backend is on port `5000` and the frontend is on port `3000` or `5173`.
-- If npm reports an engine/version error, install Node.js 22 LTS and reopen VS Code.
+Potential future development includes:
+
+- Frontend authentication and user profiles.
+- Role-based access control.
+- Enhanced API response visualisation.
+- Advanced collection execution and reporting.
+- Improved shared-request viewing interface.
+- Deployment to a cloud hosting platform.
+- Automated backend and frontend testing.
+
+## 11. Contributors
+
+**Project:** RelayAPI — Full-Stack Integrated Project
+
+**Repository:** [GitHub — RelayAPI-Integrated](https://github.com/Habeeba908/RelayAPI-Integrated)
+
+---
+
+*Built with React, TypeScript, Express.js and PostgreSQL.*
